@@ -102,7 +102,44 @@ document.getElementById('showServiceButton').addEventListener('click', showServi
 //на данном этапе id вносится вручную
 //затем обращается к документу, ищет целевой div по его id, с помощью параметра textContent добавляет в виде строк
 //значения name и service
+
+let lastIdAdded = 1
+
 function showServiceInfo() {
-  const service = getServiceById(1)
-  document.getElementById('serviceInfo').textContent = `${service.name} - ${service.price}`;
+  const service = getServiceById(lastIdAdded)
+  lastIdAdded++
+  const targetDiv = document.getElementById('serviceInfo')
+  targetDiv.appendChild(renderProduct(service))
 }
+
+function renderProduct(service) {
+  const newDiv = document.createElement("div");
+  newDiv.setAttribute('id', `product_${service.id}`)
+  // adding paragraph inside
+  const p = document.createElement("p");
+  p.innerText = `${service.name} - ${service.price}`
+  newDiv.appendChild(p)
+  // adding expand button
+  const button = document.createElement('button')
+  button.setAttribute('id', `expand_button_${service.id}`)
+  button.innerText = "expand"
+  button.addEventListener('click', ()=>expandProduct(service.id))
+  newDiv.appendChild(button)
+  return newDiv
+}
+
+function expandProduct(productId) {
+  const productDiv = document.getElementById(`product_${productId}`)
+  if (productDiv.getAttribute("expanded") === "true") {
+    const expandElement = document.getElementById(`expand_element_${productId}`)
+    expandElement.remove()
+    productDiv.setAttribute("expanded", "false")
+    return
+  }
+  const p = document.createElement("p");
+  p.innerText = `-- I am expanded --`
+  p.setAttribute("id", `expand_element_${productId}`)
+  productDiv.appendChild(p)
+  productDiv.setAttribute("expanded", "true")
+}
+
